@@ -76,7 +76,7 @@ app.post('/login', async (req, res) => {
 
         if (validateUserPassword) {
             const token = jwt.sign({ username, id: userDoc._id, iat: Math.floor(Date.now() / 1000) - 30 }, privateKey);
-            res.cookie('token', token).status(200).json({ username, id: userDoc._id }); //cookie has to come first like so
+            res.cookie('token', token).status(200).json({ username, id: userDoc._id, cover: userDoc.cover, content: userDoc.content }); //cookie has to come first like so
 
         } else {
             throw new Error("Uesrname password don't match")
@@ -157,7 +157,7 @@ app.get('/post/:id', async (req, res) => {
 app.get('/author/:id', async (req, res) => {
     try {
         const { id } = req.params
-        const posts = await User.findOne({ _id: id })
+        const posts = await User.findOne({ _id: id }, { password: 0 })
         res.status(200).json(posts)
 
     } catch (error) {
