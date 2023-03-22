@@ -5,10 +5,18 @@ const { Schema, model } = mongoose
 const userSchema = new Schema({
     username: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
-    password: { type: String, require: true }
+    password: { type: String, require: true },
+    content: {
+        type: String,
+        required: true,
+    },
+    cover: {
+        type: String,
+        required: true,
+    }
 })
 
 // Model

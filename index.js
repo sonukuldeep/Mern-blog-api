@@ -34,9 +34,9 @@ app.use(express.json())
 app.use(cookieParser())
 app.use('/uploads', express.static(__dirname + '/uploads'))
 
-app.post('/register', async (req, res) => {
+app.post('/register', uploadMiddleware.single('file'), async (req, res) => {
     try {
-        const { username, password } = req.body
+        const { username, password, content } = req.body
 
         if (password.length < 5) {
             throw new Error('Password must be atleast 6 characters')
@@ -44,7 +44,13 @@ app.post('/register', async (req, res) => {
 
         const hash = bcrypt.hashSync(password, salt);
 
-        const user = new User({ username, password: hash })
+        let newPath = "/uploads/profile-pic-dummy.png"
+        if (req.file) {
+            const { path, originalname } = req.file
+            newPath = lib.newPath(path, originalname)
+            fs.renameSync(path, newPath)
+        }
+        const user = new User({ username, password: hash, content, cover: newPath })
         const userDoc = await user.save()
 
         res.status(200).json("ok")
