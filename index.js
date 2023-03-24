@@ -26,7 +26,16 @@ const port = 4000;
 
 // Mongoose stuff
 const db_url = process.env.MONGO_DB_URL
-mongoose.connect(db_url, { useNewUrlParser: true })
+// mongoose.connect(db_url, { useNewUrlParser: true }) // modifying this to make it work on cycle
+const connectDB = async () => {
+    try {
+      const conn = await mongoose.connect(db_url);
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  }
 
 // middleware
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }))
@@ -203,7 +212,13 @@ app.put('/post/:id', uploadMiddleware.single('file'), async (req, res) => {
     }
 })
 
-app.listen(port, () => { console.log('App running on port ' + port) })
+// app.listen(port, () => { console.log('App running on port ' + port) })
+//Connect to the database before listening as per cycle
+connectDB().then(() => {
+    app.listen(port, () => {
+        console.log("listening for requests");
+    })
+})
 
 
 
