@@ -13,7 +13,7 @@ const privateKey = process.env.JSON_WEB_TOKEN_SECRET_KEY
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
 
-const cookieParser = require('cookie-parser') //cookie for password
+const cookieParser = require('cookie-parser') // Parse Cookie header and populate req.cookies
 
 const multer = require('multer') //middleware for multipart form data
 const uploadMiddleware = multer({ dest: 'uploads/' })
